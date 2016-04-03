@@ -37,11 +37,12 @@ def split_wav_file(filename, part_length, dest_dir=None, basename=None):
 
 	original_file.close()
 
-def wav_file_generator(filename, part_length):
+def wav_file_reader(filename, part_length):
 	"""
 	@brief: generates a wav file splitter
 	@param filename: the name of the wav file
 	@param part_length: the length of each part
+	@note: this function will return twice the data for stereo files
 	"""
 
 	wav_file = wave.open(filename, 'r')
@@ -53,6 +54,51 @@ def wav_file_generator(filename, part_length):
 			return
 
 		yield data
+
+
+def _split_into_channels(data, number_of_channels, sample_width):
+	data_length = len(data)
+	if data_length % (number_of_channels * sample_width) != 0:
+		raise Exception("invalid length of data")
+
+	channels = []
+	for i in range(number_of_channels):
+		channels.append('')
+
+	next_channel = 0
+	cur_pos = 0
+	while cur_pos < data_length:
+		channels[next_channel] += data[cur_pos:cur_pos+sample_width] 
+		next_channel += 1
+		if next_channel == number_of_channels:
+			next_channel = 0
+		cur_pos += sample_width
+
+	return channels
+
+
+
+def wav_file_channel_reader(filename, part_length):
+	"""
+	@brief: a generator that returns parts of a wave file
+	@param filename: the name of the wav file
+	@param part_length: the length of each part
+	@note: this function will return each time data from 1 channel
+	"""
+
+	wav_file = wave.open(filename, 'r')
+	number_of_frames_per_part = int(wav_file.getframerate() * part_length)
+	channels = wav_file.getnchannels()
+	sample_width = wav_file.getsampwidth()
+
+	while True:
+		all_data = wav_file.readframes(number_of_frames_per_part)
+		parts = _split_into_channels(all_data, channels, sample_width)
+		if len(all_data) == 0:
+			wav_file.close()
+			return
+
+		yield parts
 
 
 
