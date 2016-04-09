@@ -1,6 +1,8 @@
 import wave
 import os.path
 
+import consts
+
 DIGITS_IN_NAME = 5
 
 def split_wav_file(filename, part_length, dest_dir=None, basename=None):
@@ -37,12 +39,30 @@ def split_wav_file(filename, part_length, dest_dir=None, basename=None):
 	original_file.close()
 
 
-def split_wav_file_with_rank(filename, part_length, rank, dest_dir=None, basename=None):
+def  _add_line_to_metadata_file(filename, data):
+	"""
+	@brief: adds a line csv metadata file
+	@param filename: the full path to the file
+	@param data: the data to add in a list/tuple
+	"""
+
+	line_to_add = ''
+	for param in data:
+		line_to_add += str(param) + ','
+
+	line_to_add = line_to_add[:-1] + '\n'
+
+	f = open(filename, 'a')
+	f.write(line_to_add)
+	f.close()
+
+def split_wav_file_with_metadata(filename, part_length, metadata, meta_file, dest_dir=None, basename=None):
 	"""
 	@brief: splits a wav file into smaller parts, but keeps their rank in the new meta.csv file
 	@param filename: the name of the file
 	@param part_length: the length in seconds of each part
-	@param rank: the rank the file has
+	@param metadata: a list of all the metadata
+	@param meta_file: the metadata file to add data to
 	@param dest_dir: the directory in which all parts should be. default is current directory
 	@param basename: the name of the output files. they will be called <basename>_00000.wav
 	@note: the maxium original file length is 833 hours
@@ -68,6 +88,8 @@ def split_wav_file_with_rank(filename, part_length, rank, dest_dir=None, basenam
 		current_file.writeframes(data)
 		current_file.close()
 		file_counter += 1
+
+		_add_line_to_metadata_file(meta_file, [new_filename]+metadata)
 
 	original_file.close()
 
