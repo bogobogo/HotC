@@ -15,7 +15,7 @@ def _init_meta_file(filename):
 	for param in metadata_utils.METADATA_PARAMETERS:
 		param_line += param + ', '
 
-	param_line = param_line[:-1]
+	param_line = param_line[:-1] + '\n'
 
 	f = open(filename, 'w')
 	f.write(param_line)

@@ -89,7 +89,7 @@ def split_wav_file_with_metadata(filename, part_length, metadata, meta_file, des
 		current_file.close()
 		file_counter += 1
 
-		_add_line_to_metadata_file(meta_file, [new_filename]+metadata)
+		_add_line_to_metadata_file(meta_file, [new_filename]+metadata[1:])
 
 	original_file.close()
 

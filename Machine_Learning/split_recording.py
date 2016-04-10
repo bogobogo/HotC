@@ -13,7 +13,7 @@ PART_LENGTH_DESCRIPTION = 'The lgnth of each splitted part. Uses default if not 
 def parse_arguments(arguments):
 	parser = argparse.ArgumentParser(description=PROGRAM_DESCRIPTION)
 	parser.add_argument('-f', type=str, required=True, metavar='filename', help='File from the recordings directory')
-	parser.add_argument('-l', type=float, required=False, metavar='Part Length', help=PART_LENGTH_DESCRIPTION)
+	parser.add_argument('-L', type=float, required=False, metavar='Part Length', help=PART_LENGTH_DESCRIPTION)
 	return parser.parse_args(arguments)
 
 def split_file(filename, part_length):
@@ -27,7 +27,7 @@ def split_file(filename, part_length):
 
 	metadata = metadata_utils.get_recording_data(consts.HOTC_ORIGINAL_META_FILE, filename)
 	wav_utils.split_wav_file_with_metadata(
-		filename, 
+		filename_full_path, 
 		part_length, 
 		metadata, 
 		consts.HOTC_SPLIT_META_FILE, 
@@ -38,7 +38,7 @@ def split_file(filename, part_length):
 
 def main(arguments):
 	args = parse_arguments(arguments)
-	split_file(args.f, args.l)
+	split_file(args.f, args.L)
 
 if __name__ == '__main__':
 	main(sys.argv[1:])
