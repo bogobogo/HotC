@@ -32,3 +32,14 @@ def get_recording_data(csv_file, recording_file):
 
 	return return_data
 
+def get_param(data, param_name):
+	#find param name index
+	c = 0
+	for param in data:
+		if param == param_name:
+			return data[param_name]
+
+		c+=1
+
+	raise Exception('param {0} not found in {1}'.format(param_name, data))
+
