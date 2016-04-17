@@ -28,9 +28,9 @@ def get_recording_data(csv_file, recording_file):
 	for param in range(len(str_data)):
 		param_type = METADATA_PARAMETERS[METADATA_PARAMETERS.keys()[param]]
 		str_param = str_data[param]
-		return_data.append(param_type(str_param))
+		return_data.append((METADATA_PARAMETERS.keys()[param] ,param_type(str_param)))
 
-	return return_data
+	return OrderedDict(return_data)
 
 def get_param(data, param_name):
 	#find param name index
