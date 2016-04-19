@@ -12,7 +12,7 @@ import consts
 
 class WavLearner(object):
 
-	def __init__(self, file_length, part_length, max_freq):
+	def __init__(self, file_length, part_length, max_freq=consts.WAV_LEARNER_MAX_FREQS):
 		"""
 		@param file_length: the length of each file (in seconds)	
 		@param part_length: the length is seconds of each part
@@ -27,7 +27,6 @@ class WavLearner(object):
 
 		number_of_parts = int(file_length / part_length)
 		number_of_inputs = number_of_parts * max_freq
-		print number_of_inputs
 		self._net = buildNetwork(number_of_inputs, number_of_inputs, 1)
 		self._dataset = SupervisedDataSet(number_of_inputs,1)
 

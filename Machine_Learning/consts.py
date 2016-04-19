@@ -10,6 +10,9 @@ HOTC_SPLIT_META_FILE = os.path.join(HOTC_SPLIT_RECORDINGS_DIR, 'split_meta.csv')
 
 DEFAULT_SPLITTED_PART_LENGTH = 3
 
+WAV_LEARNER_MAX_FREQS = 300
+DOMINANT_FREQS_LEANRNER_MAX_FREQS = 10
+
 def _init_meta_file(filename):
 	param_line = ''
 	for param in metadata_utils.METADATA_PARAMETERS:
