@@ -78,7 +78,6 @@ def split_wav_file_with_metadata(filename, part_length, metadata, meta_file, des
 	total_number_of_frames = file_params[3]
 	file_counter = 0
 	data = 'init'
-
 	while len(data) != 0:
 		new_filename = basename + '_' + '0' * (DIGITS_IN_NAME-len(str(file_counter))) + str(file_counter) + '.wav'
 		current_file = wave.open(os.path.join(dest_dir, new_filename), 'w')
@@ -89,7 +88,7 @@ def split_wav_file_with_metadata(filename, part_length, metadata, meta_file, des
 		current_file.close()
 		file_counter += 1
 
-		_add_line_to_metadata_file(meta_file, [new_filename]+metadata[1:])
+		_add_line_to_metadata_file(meta_file, [new_filename]+metadata.values()[1:])
 
 	original_file.close()
 
