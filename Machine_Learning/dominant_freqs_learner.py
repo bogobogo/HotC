@@ -62,6 +62,14 @@ class DominantFreqsLearner(object):
 
 		return self._order_max_freqs(max_freqs)
 
+	def _get_file_activation(self, filename, channel=None):
+		data = wav_to_fft.wav_to_normalized_fft(filename, self._part_length, channel=channel)
+		all_dominant_freqs = []
+		for part in data:
+			all_dominant_freqs += self._find_max_freqs(part, self._max_freqs)
+
+		return all_dominant_freqs
+
 	def __init__(self, file_length, parts_length, max_freqs=consts.DOMINANT_FREQS_LEANRNER_MAX_FREQS):
 		"""
 		@param file_length: the length of each file (in seconds)	
@@ -73,6 +81,7 @@ class DominantFreqsLearner(object):
 
 		self._part_length = parts_length
 		self._max_freqs = max_freqs
+		self._started_training = False
 
 		number_of_parts = int(file_length/parts_length)
 		number_of_inputs = number_of_parts * self._max_freqs
@@ -93,17 +102,34 @@ class DominantFreqsLearner(object):
 				if the file length is smaller then specified, the file wont be inspected
 		"""
 
-		data = wav_to_fft.wav_to_normalized_fft(filename, self._part_length, channel=channel)
-		all_dominant_freqs = []
-		for part in data:
-			all_dominant_freqs += self._find_max_freqs(part, self._max_freqs)
-
+		all_dominant_freqs = self._get_file_activation(filename, channel)
 		self._dataset.addSample(all_dominant_freqs, [expected_output])
 		print 'added ' + filename
 
+	def train_single_epoch(self):
+		if self._started_training:
+			return self._trainer.train()
+
+		else:
+			self._started_training = True
+			self._trainer = BackpropTrainer(self._net, self._dataset)
+			return self._trainer.train()
+
 	def train(self):
-		trainer = BackpropTrainer(self._net, self._dataset)
-		erros = trainer.trainUntilConvergence()
+		self._trainer = BackpropTrainer(self._net, self._dataset)
+		erros = self._trainer.trainUntilConvergence()
 		return erros
+
+	def calculate_split_file(self, filename, channel=None):
+		full_path = os.path.join(consts.HOTC_SPLIT_RECORDINGS_DIR, filename)
+		return self.calculate_file(full_path, channel)
+
+	def calculate_file(self, filename, channel=None):
+		file_activation = self._get_file_activation(filename, channel)
+		return self._net.activate(file_activation)[0]
+
+
+		
+
 
 
