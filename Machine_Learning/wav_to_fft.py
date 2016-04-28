@@ -72,7 +72,7 @@ def wav_to_normalized_fft(filename, part_length, channel=None):
 	for cur_fft in all_ffts:
 		real_ffts.append(abs(cur_fft[:len(cur_fft)/2]))
 
-	return real_ffts
+	return real_ffts[1:] # Don't return 0, to prevent some of the gibbs effects
 
 
 

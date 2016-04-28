@@ -7,6 +7,7 @@ import time
 from pybrain.tools.customxml import NetworkWriter
 from pybrain.tools.customxml import NetworkReader
 import matplotlib.pyplot as plt
+import time
 
 PROGRAM_DESCRIPTION = 'Runs the domianant frequencies learner'
 EPOCHS_HELP = 'For how many epochs to run the learner'
@@ -39,6 +40,7 @@ def plot_graph(erros):
 	plt.show()
 
 def run(epochs, network_file, file_length, part_length, dominant_frequncies, show_graph, verbose_output):
+	start_time = time.time()
 	learner = dominant_freqs_learner.DominantFreqsLearner(file_length, part_length ,dominant_frequncies)
 	all_files = get_all_split_files()
 	if verbose_output:
@@ -50,10 +52,12 @@ def run(epochs, network_file, file_length, part_length, dominant_frequncies, sho
 		except:
 			pass
 
+	dataset_add_time = time.time() - start_time
 	if verbose_output:
 		print 'finished adding file to dataset at ' + time.ctime()
 
 	errors = []
+	learning_start_time = time.time()
 	for epoch in range(epochs):
 		error = learner.train_single_epoch()
 		if verbose_output:
@@ -61,11 +65,12 @@ def run(epochs, network_file, file_length, part_length, dominant_frequncies, sho
 
 		errors.append(error)
 
+	learning_time = time.time() - learning_start_time
 	NetworkWriter.writeToFile(learner._net, network_file)
 	if show_graph:
 		plot_graph(errors)
 
-	return errors
+	return (errors, dataset_add_time, learning_time)
 
 def main(arguments):
 	args = parse_args(arguments)
