@@ -1,6 +1,7 @@
 from pybrain.tools.shortcuts import buildNetwork
 from pybrain.datasets import SupervisedDataSet
 from pybrain.supervised.trainers import BackpropTrainer
+from pybrain.tools.customxml import NetworkReader
 
 import numpy as np
 
@@ -127,6 +128,9 @@ class DominantFreqsLearner(object):
 	def calculate_file(self, filename, channel=None):
 		file_activation = self._get_file_activation(filename, channel)
 		return self._net.activate(file_activation)[0]
+
+	def load_network(self, filename):
+		self._net = NetworkReader.readFrom(filename)
 
 
 		
