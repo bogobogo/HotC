@@ -64,3 +64,4 @@ target/
 tests
 *.mp3
 *.wav
+*.xml
