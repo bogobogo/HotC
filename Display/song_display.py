@@ -6,11 +6,11 @@ import time
 import Control.config
 import happiness_display
 
-HAPPINESS_MIN_LEVEL_TO_SONG = { 0: "badad.mp3",
-        0.2: "fallen_angel.mp3",
-        0.4: "hotel_california.mp3",
-        0.6: "feel_good_inc.mp3",
-        0.8: "happy.mp3" }
+HAPPINESS_MIN_LEVEL_TO_SONG = { -1: "badad.mp3",
+        -0.6: "fallen_angel.mp3",
+        -0.2: "hotel_california.mp3",
+        0.2: "feel_good_inc.mp3",
+        0.6: "happy.mp3" }
 
 
 class HappinessDependantSongDisplay(happiness_display.HappinessDisplay):
@@ -23,7 +23,7 @@ class HappinessDependantSongDisplay(happiness_display.HappinessDisplay):
 
     def display_happiness_level(self, wav_filename, level):
         print "[Display|Song Display] wav name \"%s\" is level %s" % (wav_filename, level, )
-        normalized_level = round((5* level) - 0.5) / 5
+        normalized_level = max([x for x in HAPPINESS_MIN_LEVEL_TO_SONG.keys() if x<level])
         if not Control.config.HAPPINESS_MIN_LEVEL <= level <= Control.config.HAPPINESS_MAX_LEVEL:
             raise ValueError("Happiness level not in range (%s)" % (level, ))
 

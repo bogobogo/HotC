@@ -7,6 +7,7 @@ import sys
 sys.path.append("..")
 
 import Machine_Learning
+import Machine_Learning.dominant_freqs_learner
 import Display.song_display
 import Control.recorder as recorder
 import Control.config as config
@@ -19,14 +20,20 @@ class PseudoBrain(object):
     """
     def __init__(self):
         super(PseudoBrain, self).__init__()
+        self.network = Machine_Learning.dominant_freqs_learner.DominantFreqsLearner(6, 1)
+        self.network.load_network('dfl2.xml')
 
     def run(self, wav_filename):
         print "[BRAIN|PSEUDO BRAIN] Analyzing WAV..."
         time.sleep(1.2)
         print "[BRAIN|PSEUDO BRAIN] Finished analyzing"
         return config.HAPPINESS_MIN_LEVEL + (
-                random.random() / (config.HAPPINESS_MAX_LEVEL - config.HAPPINESS_MIN_LEVEL)
+                self.analize_wav(wav_filename)/ (config.HAPPINESS_MAX_LEVEL - config.HAPPINESS_MIN_LEVEL)
                 )
+
+    def analize_wav(self, wav_filename):
+        return self.network.calculate_file(wav_filename)
+
 
 class HotC(object):
     """
@@ -50,7 +57,7 @@ class HotC(object):
         # 1. Record
         record_filename = self._generate_wav_filename()
         print "[HotC] Recording crowd to file \"%s\"..." % (record_filename, )
-        recorder.record_to_file(record_filename, 10)
+        recorder.record_to_file(record_filename, 1)
         print "[HotC] Done"
 
         # 2. Process
